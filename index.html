@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rule Engine</title>
+    <link rel="stylesheet" href="frontend/style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Rule Engine</h1>
+        <div>
+            <label for="ruleInput">Enter Rule:</label>
+            <textarea id="ruleInput" rows="4"></textarea>
+            <button onclick="createRule()">Create Rule</button>
+        </div>
+
+        <div>
+            <label for="evaluationData">Evaluation Data (JSON format):</label>
+            <textarea id="evaluationData" rows="4"></textarea>
+            <button onclick="evaluateRule()">Evaluate Rule</button>
+        </div>
+        <div id="result" style="margin-top: 20px; font-weight: bold;"></div>
+    </div>
+
+    <script>
+        let createdRuleId = null;
+
+        function createRule() {
+            const rule = document.getElementById('ruleInput').value;
+            fetch('/api/create_rule', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ rule })
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert('Rule created successfully with ID: ' + data.ruleId);
+                createdRuleId = data.ruleId;
+            })
+            .catch(error => console.error('Error:', error));
+        }
+
+        function evaluateRule() {
+            const data = document.getElementById('evaluationData').value;
+            let jsonData;
+            try {
+                jsonData = JSON.parse(data);
+            } catch (e) {
+                alert('Invalid JSON format');
+                return;
+            }
+
+            fetch('http://localhost:3000/api/evaluate_rule', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ data: jsonData, ruleId: createdRuleId })
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('result').innerText = `Result: ${data.result}`;
+            })
+            .catch(error => console.error('Error:', error));
+        }
+    </script>
+</body>
+</html>

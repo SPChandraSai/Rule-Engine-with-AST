@@ -49,7 +49,7 @@ rule-engine/
 1. Clone the repository:
    ```bash
    git clone https://github.com/SPChandraSai/Rule-Engine-with-AST
-   cd rule-engine
+   cd Rule-Engine-with-AST
    ```
 
 2. Install backend dependencies:
